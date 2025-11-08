@@ -105,6 +105,7 @@ namespace VolFx
                 builder.UseTexture(source, AccessFlags.Read);
                 builder.SetRenderAttachment(destination, 0, AccessFlags.Write);
                 builder.AllowPassCulling(false);
+                builder.AllowGlobalStateModification(true);
 
                 builder.SetRenderFunc(static (BlitPassData data, RasterGraphContext context) =>
                 {
