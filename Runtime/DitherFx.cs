@@ -41,17 +41,17 @@ namespace VolFx
 
             public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
             {
+                // Get URP resource data
+                UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
+                UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
+
                 // Validate the pass
                 _owner._pass.Validate();
                 if (_owner._pass.IsActive == false)
                     return;
 
-                // Get URP resource data
-                UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
-                UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
-
                 // Get source texture (camera color)
-                TextureHandle source = resourceData.cameraColor;
+                TextureHandle source = resourceData.activeColorTexture;
 
                 // Create destination texture
                 RenderTextureDescriptor desc = cameraData.cameraTargetDescriptor;
@@ -67,7 +67,7 @@ namespace VolFx
                 _owner._pass.InvokeRenderGraph(renderGraph, _owner.name, source, destination, frameData);
 
                 // Update camera color to the output
-                resourceData.cameraColor = destination;
+                resourceData.activeColorTexture = destination;
             }
         }
 

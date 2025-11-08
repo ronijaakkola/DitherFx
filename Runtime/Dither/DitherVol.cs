@@ -13,9 +13,9 @@ namespace VolFx
                                                                                       new Keyframe(0f, 0f),
                                                                                       new Keyframe(1f, 0f))), false);*/
         
-        public ClampedFloatParameter m_Impact = new ClampedFloatParameter(0, 0, 1);
-        
-        public ClampedFloatParameter m_Power = new ClampedFloatParameter(0, 0, 1);
+        public ClampedFloatParameter m_Impact = new ClampedFloatParameter(1, 0, 1);
+
+        public ClampedFloatParameter m_Power = new ClampedFloatParameter(0.5f, 0, 1);
         
         public ClampedFloatParameter m_Scale    = new ClampedFloatParameter(1, 0, 1);
         public BoolParameter         m_Pixelate = new BoolParameter(true, false);

@@ -122,9 +122,9 @@ namespace VolFx
                 return false;
             
             var aspect = Screen.width / (float)Screen.height;
-            
+
             var fps = settings.m_Fps.overrideState ? settings.m_Fps.value : _frameRate;
-            var curFrame = Mathf.FloorToInt(Time.unscaledTime / (1f / fps));
+            var curFrame = fps > 0 ? Mathf.FloorToInt(Time.unscaledTime * fps) : 0;
             var nextFrame = _frame != curFrame;
             if (nextFrame)
                 _frame = curFrame;
@@ -168,14 +168,16 @@ namespace VolFx
 
             var scale        = Mathf.Lerp(_scaleRange.x, _scaleRange.y, settings.m_Scale.overrideState ? settings.m_Scale.value : _scale);
             var patternDepth = (float)(_dither.width / _dither.height);
-            
+
             _ditherMad.x = scale * aspect;
-            _ditherMad.y = scale; 
-            if (nextFrame)
+            _ditherMad.y = scale;
+
+            // Initialize offset values on first frame or when frame updates
+            if (nextFrame || (_ditherMad.z == 0 && _ditherMad.w == 0))
             {
                 // snap to pattern pixels
                 var step = _dither.width / patternDepth;
-                
+
                 if (noiseMode == Mode.Noise)
                 {
                     _ditherMad.z = Random.value;
