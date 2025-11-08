@@ -99,7 +99,6 @@ namespace VolFx
             using (var builder = renderGraph.AddRasterRenderPass<BlitPassData>(passName, out var passData))
             {
                 passData.source = source;
-                passData.destination = destination;
                 passData.material = material;
                 passData.pass = pass;
 
@@ -109,7 +108,9 @@ namespace VolFx
 
                 builder.SetRenderFunc(static (BlitPassData data, RasterGraphContext context) =>
                 {
-                    Blitter.BlitCameraTexture(context.cmd, data.source, data.destination, data.material, data.pass);
+                    // Use DrawProcedural with the fullscreen triangle for RasterGraphContext
+                    context.cmd.SetGlobalTexture(s_MainTexId, data.source);
+                    context.cmd.DrawProcedural(Matrix4x4.identity, data.material, data.pass, MeshTopology.Triangles, 3, 1);
                 });
             }
         }
@@ -117,7 +118,6 @@ namespace VolFx
         private class BlitPassData
         {
             public TextureHandle source;
-            public TextureHandle destination;
             public Material material;
             public int pass;
         }
