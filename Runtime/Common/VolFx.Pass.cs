@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.RenderGraphModule;
 
 //  Dither © NullTale - https://x.com/NullTale
 namespace VolFx
@@ -43,9 +44,6 @@ namespace VolFx
             internal void _init()
             {
 #if UNITY_EDITOR
-#if !UNITY_2022_1_OR_NEWER
-                Debug.LogError($"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name} require Unity 2022 or higher");
-#endif
                 if (_shader == null || _material == null)
                 {
                     var shaderName = GetType().GetCustomAttributes(typeof(ShaderNameAttribute), true).FirstOrDefault() as ShaderNameAttribute;
@@ -56,16 +54,16 @@ namespace VolFx
                     }
                 }
 #endif
-                
+
                 if (_shader != null)
                     _material = new Material(_shader);
-                
+
                 Init();
             }
 
-            public virtual void Invoke(CommandBuffer cmd, RTHandle source, RTHandle dest, ScriptableRenderContext context, ref RenderingData renderingData)
+            public virtual void InvokeRenderGraph(RenderGraph renderGraph, string passName, TextureHandle source, TextureHandle destination, ContextContainer frameData)
             {
-                Utils.Blit(cmd, source, dest, _material, 0, Invert);
+                Utils.BlitRenderGraph(renderGraph, passName, source, destination, _material, 0);
             }
             
             public void Validate()
@@ -106,13 +104,6 @@ namespace VolFx
             /// called each frame to check is render is required and setup render material
             /// </summary>
             public abstract bool Validate(Material mat);
-            
-            /// <summary>
-            /// frame clean up function used if implemented custom Invoke function to release resources
-            /// </summary>
-            public virtual void Cleanup(CommandBuffer cmd)
-            {
-            }
             
             /// <summary>
             /// used for optimization purposes, returns true if we need to call _editorSetup function

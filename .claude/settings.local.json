@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:docs.unity3d.com)",
+      "WebFetch(domain:www.cyanilux.com)",
+      "WebFetch(domain:theknightsofu.com)",
+      "WebFetch(domain:github.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.RenderGraphModule;
 using Random = UnityEngine.Random;
 
 //  Dither © NullTale - https://twitter.com/NullTale/
@@ -92,11 +94,30 @@ namespace VolFx
             }
         }
         
-        public static void Blit(CommandBuffer cmd, RTHandle source, RTHandle destination, Material material, int pass = 0, bool invert = false)
+        public static void BlitRenderGraph(RenderGraph renderGraph, string passName, TextureHandle source, TextureHandle destination, Material material, int pass = 0)
         {
-            cmd.SetGlobalTexture(s_MainTexId, source);
-            cmd.SetRenderTarget(destination, 0);
-            cmd.DrawMesh(FullscreenMesh, invert ? s_IndentityInvert : Matrix4x4.identity, material, 0, pass);
+            using (var builder = renderGraph.AddRasterRenderPass<BlitPassData>(passName, out var passData))
+            {
+                passData.source = source;
+                passData.material = material;
+                passData.pass = pass;
+
+                builder.UseTexture(source, AccessFlags.Read);
+                builder.SetRenderAttachment(destination, 0, AccessFlags.Write);
+                builder.AllowPassCulling(false);
+
+                builder.SetRenderFunc(static (BlitPassData data, RasterGraphContext context) =>
+                {
+                    Blitter.BlitTexture(context.cmd, data.source, new Vector4(1, 1, 0, 0), data.material, data.pass);
+                });
+            }
+        }
+
+        private class BlitPassData
+        {
+            public TextureHandle source;
+            public Material material;
+            public int pass;
         }
         
         public static Vector2 ToNormal(this float rad)

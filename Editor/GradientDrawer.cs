@@ -30,16 +30,7 @@ namespace VolFx.Editor
             // =======================================================================
             Gradient _getGradient(SerializedProperty gradientProperty)
             {
-#if UNITY_2022_1_OR_NEWER
                 return grad.gradientValue;
-#else
-                System.Reflection.PropertyInfo propertyInfo = typeof(SerializedProperty).GetProperty("gradientValue",
-                                                                                                     System.Reflection.BindingFlags.Public |
-                                                                                                     System.Reflection.BindingFlags.NonPublic |
-                                                                                                     System.Reflection.BindingFlags.Instance);
-                
-                return propertyInfo.GetValue(gradientProperty, null) as Gradient;
-#endif
             }
         }
     }

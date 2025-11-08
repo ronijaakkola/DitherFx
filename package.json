@@ -1,16 +1,14 @@
 {
-  "name": "www.nulltale.ditherfx",
+  "name": "nash.ditherfx",
   "displayName": "DitherFx",
   "version": "1.0.0",
-  "unity": "2022.1",
+  "unity": "6000.0",
   "description": "Palette Dithering for Unity Urp and VolFx",
   "author": {
-    "name": "NullTale",
-    "email": "nulltale@gmail.com",
-    "url": "https://twitter.com/NullTale"
+    "name": "Nash"
   },
   "dependencies": {
-    "com.unity.render-pipelines.universal": "14.0.6"
+    "com.unity.render-pipelines.universal": "17.0.0"
   },
   "hideInEditor": false,
   "samples": [
