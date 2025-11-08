@@ -119,7 +119,7 @@ Shader "Hidden/VolFx/Dither"
             half4 frag(frag_in i) : COLOR
             {
 #if PIXELATE
-                // pixelate screen dither related 
+                // pixelate screen dither related
                 float2 pix = float2(_PatternData.x, _PatternData.y);
                 half4 col = tex2D(_MainTex, float2(floor((i.uv.x) * pix.x) / pix.x, floor((i.uv.y) * pix.y) / pix.y));
 #else
@@ -131,27 +131,27 @@ Shader "Hidden/VolFx/Dither"
 #else
                 float3 uvw = col;
 #endif
-                
+
 #if DITHER
                 half4 plette  = lut_sample(uvw, _PaletteTex);
-                float measure = lut_sample(uvw, _MeasureTex);
+                float measure = lut_sample(uvw, _MeasureTex).r;
                 float grade   = 1 - saturate(pow(1 - measure / _Dither, 4) + .001); // can be customized and remaped via curve (dither pattern sample)
                 float noise   = grad_sample(frac(mad(i.uv, _DitherMad.xy, _DitherMad.zw)), grade, _DitherTex).r;
 
-                
+
                 half4 result = lerp(lut_sample(uvw, _PaletteTex), lut_sample(uvw, _QuantTex), step(measure, noise * _Dither));
                 result.a *= col.a;
-                
+
                 return lerp(col, result, _Weight);
 #endif
-                          
+
 #if NOISE
-                float measure = lut_sample(uvw, _MeasureTex);
+                float measure = lut_sample(uvw, _MeasureTex).r;
                 float noise   = tex2D(_DitherTex, frac(mad(i.uv, _DitherMad.xy, _DitherMad.zw))).r;
-                
+
                 half4 result = lerp(lut_sample(uvw, _PaletteTex), lut_sample(uvw, _QuantTex), step(measure, noise * _Dither));
                 result.a *= col.a;
-                
+
                 return lerp(col, result, _Weight);
                 // return half4(lerp(col, lerp(lut_sample(uvw, _PaletteTex), lut_sample(uvw, _QuantTex), step(measure, _Dither) * noise), _Weight).rgb, col.a);
 #endif
