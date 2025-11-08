@@ -51,7 +51,7 @@ namespace VolFx
                 UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
 
                 // Get source texture (camera color)
-                TextureHandle source = resourceData.activeColorTexture;
+                TextureHandle source = resourceData.cameraColor;
 
                 // Create destination texture
                 RenderTextureDescriptor desc = cameraData.cameraTargetDescriptor;
