@@ -66,8 +66,26 @@ namespace VolFx
                 // Invoke the dither pass using RenderGraph
                 _owner._pass.InvokeRenderGraph(renderGraph, _owner.name, source, destination, frameData);
 
-                // Update camera color to the output
-                resourceData.activeColorTexture = destination;
+                // Copy result back to camera color using a blit pass
+                using (var builder = renderGraph.AddRasterRenderPass<CopyPassData>("Copy Dither to Camera", out var passData))
+                {
+                    passData.source = destination;
+
+                    builder.UseTexture(destination, AccessFlags.Read);
+                    builder.SetRenderAttachment(source, 0, AccessFlags.Write);
+                    builder.AllowPassCulling(false);
+                    builder.AllowGlobalStateModification(true);
+
+                    builder.SetRenderFunc(static (CopyPassData data, RasterGraphContext context) =>
+                    {
+                        Blitter.BlitTexture(context.cmd, data.source, new Vector4(1, 1, 0, 0), 0, false);
+                    });
+                }
+            }
+
+            private class CopyPassData
+            {
+                public TextureHandle source;
             }
         }
 
